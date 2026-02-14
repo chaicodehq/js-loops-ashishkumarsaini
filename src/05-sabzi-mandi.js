@@ -30,5 +30,22 @@
  *   // => { items: [], totalBill: 0 }
  */
 export function sabziMandiBill(shoppingList, priceList) {
-  // Your code here
+  if (!Array.isArray(shoppingList) || !shoppingList.length || !priceList || !Object.keys(priceList).length) {
+    return { items: [], totalBill: 0 };
+  }
+
+  let totalBill = 0;
+
+  const items = shoppingList.map((item) => {
+    const itemPrice = priceList[item.name];
+
+    if (itemPrice && itemPrice <= 80) {
+      totalBill += item.qty * itemPrice
+      return { name: item.name, qty: item.qty, cost: item.qty * itemPrice };
+    }
+
+    return null;
+  }).filter(Boolean)
+
+  return { totalBill, items }
 }

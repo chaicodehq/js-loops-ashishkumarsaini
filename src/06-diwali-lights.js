@@ -38,5 +38,50 @@
  *   // => { selected: [{ color: "golden", length: 5, cost: 250 }], totalLength: 5, totalCost: 250 }
  */
 export function diwaliLightsPlan(lightStrings, budget) {
-  // Your code here
+  if (!Array.isArray(lightStrings) || !Number.isInteger(budget)) {
+    return { selected: [], totalLength: 0, totalCost: 0 };
+  }
+
+  const colorName = {
+    "golden": "golden",
+    "multicolor": "multicolor",
+    "white": "white",
+    "other": "other"
+  }
+  const priceByColor = {
+    [colorName.golden]: 50,
+    [colorName.multicolor]: 40,
+    [colorName.white]: 30,
+    [colorName.other]: 35
+  };
+
+  let totalCalcCost = 0;
+  let colorLightsWithCost = [];
+
+  for (const { color, length } of lightStrings) {
+    const colorPrice = priceByColor[color] || priceByColor[colorName.other];
+    const cost = colorPrice * length;
+    totalCalcCost += cost;
+
+    colorLightsWithCost.push({ color, cost, length });
+  }
+
+  const { totalLength, totalCost, selected } = colorLightsWithCost.reduce((acc, { cost, length, color }) => {
+    const totalCost = acc.totalCost + cost;
+    const maxPrice = acc.maxPrice + cost;
+
+    if (maxPrice < budget) {
+      return {
+        totalLength: acc.totalLength + length,
+        totalCost,
+        selected: [...acc.selected, { cost, length, color }],
+        maxPrice
+      }
+    }
+
+    return { ...acc, maxPrice };
+
+  }, { totalLength: 0, totalCost: 0, selected: [], maxPrice: 0 });
+
+  return { totalLength, totalCost, selected };
 }
